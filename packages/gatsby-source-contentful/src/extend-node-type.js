@@ -573,15 +573,18 @@ exports.extendNodeType = ({ type, store, cache }) => {
 
           traverse(JSON.parse(source.raw))
 
-          if (!rawReferences.Entry.length && !rawReferences.Asset.length) {
+          if (!rawReferences.Entry.size && !rawReferences.Asset.size) {
             return []
           }
+
+          const rawEntries = Array.from(rawReferences.Entry)
+          const rawAssets = Array.from(rawReferences.Asset)
 
           // Query for referenced nodes
           const resultEntries = await context.nodeModel.runQuery({
             query: {
               filter: {
-                contentful_id: { in: rawReferences.Entry },
+                contentful_id: { in: rawEntries },
               },
             },
             type: `ContentfulEntry`,
@@ -590,7 +593,7 @@ exports.extendNodeType = ({ type, store, cache }) => {
           const resultAssets = await context.nodeModel.runQuery({
             query: {
               filter: {
-                contentful_id: { in: rawReferences.Asset },
+                contentful_id: { in: rawAssets },
               },
             },
             type: `ContentfulAsset`,
@@ -606,12 +609,12 @@ exports.extendNodeType = ({ type, store, cache }) => {
                 result.node_locale === nodeLocale
             )
 
-          const localizedEntryReferences = rawReferences.Entry.map(
-            referenceId => findForLocaleWithFallback(resultEntries, referenceId)
+          const localizedEntryReferences = rawEntries.map(referenceId =>
+            findForLocaleWithFallback(resultEntries, referenceId)
           )
 
-          const localizedAssetReferences = rawReferences.Asset.map(
-            referenceId => findForLocaleWithFallback(resultAssets, referenceId)
+          const localizedAssetReferences = rawAssets.map(referenceId =>
+            findForLocaleWithFallback(resultAssets, referenceId)
           )
 
           return [...localizedEntryReferences, ...localizedAssetReferences]
