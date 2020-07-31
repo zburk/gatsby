@@ -265,6 +265,11 @@ module.exports = async (program: IProgram): Promise<void> => {
         port: proxyPort,
       }
     )
+    // We don't need to keep a lock on this, as it's just site metadata
+    await createServiceLock(program.directory, `metadata`, {
+      name: program.sitePackageJson.name,
+      sitePath: program.directory,
+    }).then(unlock => unlock?.())
 
     if (!statusUnlock || !developUnlock) {
       console.error(
