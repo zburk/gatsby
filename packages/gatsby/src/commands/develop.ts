@@ -269,6 +269,7 @@ module.exports = async (program: IProgram): Promise<void> => {
     await createServiceLock(program.directory, `metadata`, {
       name: program.sitePackageJson.name,
       sitePath: program.directory,
+      pid: process.pid,
     }).then(unlock => unlock?.())
 
     if (!statusUnlock || !developUnlock) {
