@@ -273,6 +273,7 @@ module.exports = async (program: IProgram): Promise<void> => {
       name: program.sitePackageJson.name,
       sitePath: program.directory,
       pid: process.pid,
+      lastRun: Date.now(),
     }).then(unlock => unlock?.())
 
     if (!statusUnlock || !developUnlock) {
