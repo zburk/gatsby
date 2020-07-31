@@ -70,7 +70,7 @@ export const getService = async (
   programPath: string,
   serviceName: string,
   ignoreLockfile: boolean = false
-): Promise<string | null> => {
+): Promise<Record<string, unknown> | null> => {
   if (isCI()) return memoryServices[serviceName] || null
 
   const siteDir = getSiteDir(programPath)
