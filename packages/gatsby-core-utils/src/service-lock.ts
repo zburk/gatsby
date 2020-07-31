@@ -68,7 +68,8 @@ export const createServiceLock = async (
 
 export const getService = async (
   programPath: string,
-  serviceName: string
+  serviceName: string,
+  ignoreLockfile: boolean = false
 ): Promise<string | null> => {
   if (isCI()) return memoryServices[serviceName] || null
 
@@ -76,7 +77,10 @@ export const getService = async (
   const serviceDataFile = getDataFilePath(siteDir, serviceName)
 
   try {
-    if (await lockfile.check(serviceDataFile, lockfileOptions)) {
+    if (
+      ignoreLockfile ||
+      (await lockfile.check(serviceDataFile, lockfileOptions))
+    ) {
       return JSON.parse(
         await fs.readFile(serviceDataFile, `utf8`).catch(() => `null`)
       )
